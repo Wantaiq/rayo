@@ -2,16 +2,14 @@ import authSchema from '@/schemas/auth.schema';
 import authService from '@/services/auth.service';
 import sessionService from '@/services/session.service';
 import tryCatch from '@/utils/tryCatch';
+import type { User } from '@prisma/client';
 import type { Request, Response } from 'express';
 import { InferType } from 'yup';
 
 const register = tryCatch(
   async (
     req: Request<any, any, InferType<typeof authSchema.register>>,
-    res: Response<{
-      id: number;
-      username: string;
-    }>,
+    res: Response<Omit<User, 'password'>>,
   ) => {
     const { username, password } = await authSchema.register.validate(
       req.body,
@@ -39,7 +37,7 @@ const register = tryCatch(
 const login = tryCatch(
   async (
     req: Request<any, any, InferType<typeof authSchema.login>>,
-    res: Response<{ id: number; username: string }>,
+    res: Response<Omit<User, 'password'>>,
   ) => {
     const { username, password } = await authSchema.login.validate(req.body, {
       abortEarly: true,
