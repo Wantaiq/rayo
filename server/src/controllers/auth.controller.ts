@@ -44,11 +44,7 @@ const login = tryCatch(
       stripUnknown: true,
     });
 
-    const {
-      sessionToken,
-      id,
-      username: newUserUsername,
-    } = await authService.login(username, password);
+    const { sessionToken, user } = await authService.login(username, password);
 
     res.cookie('sessionToken', sessionToken, {
       httpOnly: true,
@@ -56,7 +52,7 @@ const login = tryCatch(
       sameSite: 'strict',
       maxAge: 24 * 60 * 60 * 1000,
     });
-    res.status(200).json({ id, username: newUserUsername }).end();
+    res.status(200).json({ id: user.id, username: user.username }).end();
   },
 );
 

@@ -30,17 +30,13 @@ const register = async (username: string, password: string) => {
 };
 
 const login = async (username: string, password: string) => {
-  const existingUser =
-    await userService.getUserWithPasswordByUsername(username);
+  const user = await userService.getUserWithPasswordByUsername(username);
 
-  if (!existingUser) {
+  if (!user) {
     throw new AppError('Invalid username or password.', 400);
   }
 
-  const isPasswordValid = await comparePassword(
-    password,
-    existingUser.password,
-  );
+  const isPasswordValid = await comparePassword(password, user.password);
   if (!isPasswordValid) {
     throw new AppError('Invalid username or password.', 400);
   }
@@ -48,14 +44,11 @@ const login = async (username: string, password: string) => {
   // @ts-ignore
   delete existingUser.password;
 
-  const { token: sessionToken } = await sessionService.createSession(
-    existingUser.id,
-  );
+  const { token: sessionToken } = await sessionService.createSession(user.id);
 
   return {
     sessionToken,
-    id: existingUser.id,
-    username: existingUser.username,
+    user,
   };
 };
 
