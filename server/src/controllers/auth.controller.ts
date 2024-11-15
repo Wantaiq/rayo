@@ -42,4 +42,47 @@ const register = tryCatch(
   },
 );
 
-export default { register };
+const login = tryCatch(
+  async (
+    req: Request<any, any, InferType<typeof authSchema.login>>,
+    res: Response<{ id: number; username: string }>,
+  ) => {
+    const { username, password } = await authSchema.login.validate(req.body, {
+      abortEarly: true,
+      stripUnknown: true,
+    });
+
+    const existingUser =
+      await userService.getUserWithPasswordByUsername(username);
+    if (!existingUser) {
+      throw new AppError('Invalid username or password.', 400);
+    }
+
+    const isPasswordValid = await authService.comparePassword(
+      password,
+      existingUser.password,
+    );
+    if (!isPasswordValid) {
+      throw new AppError('Invalid username or password.', 400);
+    }
+
+    // @ts-ignore
+    delete existingUser.password;
+
+    const sessionToken = authService.createSessionToken();
+    await authService.createSession(sessionToken, existingUser.id);
+
+    res.cookie('sessionToken', sessionToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+    res
+      .status(200)
+      .json({ id: existingUser.id, username: existingUser.username })
+      .end();
+  },
+);
+
+export default { register, login };

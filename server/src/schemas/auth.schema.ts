@@ -8,4 +8,9 @@ const register = object({
     .trim(),
 });
 
-export default { register };
+const login = object({
+  username: string().required('Username is required.').trim(),
+  password: string().required('Password is required.').trim(),
+});
+
+export default { register, login };

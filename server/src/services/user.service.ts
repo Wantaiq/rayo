@@ -17,6 +17,23 @@ const getUserByUsername = async (
   return user;
 };
 
+const getUserWithPasswordByUsername = async (
+  username: Prisma.UserFindUniqueArgs['where']['username'],
+) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      username,
+    },
+    select: {
+      id: true,
+      username: true,
+      password: true,
+    },
+  });
+
+  return user;
+};
+
 const createUser = async (username: string, password: string) => {
   const user = await prisma.user.create({
     data: {
@@ -32,4 +49,4 @@ const createUser = async (username: string, password: string) => {
   return user;
 };
 
-export default { getUserByUsername, createUser };
+export default { getUserByUsername, createUser, getUserWithPasswordByUsername };
