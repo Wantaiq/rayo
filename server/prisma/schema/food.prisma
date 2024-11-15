@@ -2,4 +2,6 @@ model Food {
     id       Int    @id @default(autoincrement())
     name     String
     quantity Int
+    user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId   Int
 }
