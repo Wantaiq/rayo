@@ -2,7 +2,7 @@
 CREATE TABLE "Session" (
     "id" SERIAL NOT NULL,
     "token" VARCHAR(255) NOT NULL,
-    "expiry_timestamp" TIMESTAMP(3) NOT NULL DEFAULT NOW() + INTERVAL '24 hours',
+    "expiry_timestamp" TIMESTAMP(3) NOT NULL DEFAULT timezone('utc', NOW() + INTERVAL '24 hours'),
     "userId" INTEGER NOT NULL,
 
     CONSTRAINT "Session_pkey" PRIMARY KEY ("id")
