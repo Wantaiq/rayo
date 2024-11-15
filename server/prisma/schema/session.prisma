@@ -1,0 +1,7 @@
+model Session {
+    id               Int      @id @default(autoincrement())
+    token            String   @unique @db.VarChar(255)
+    expiry_timestamp DateTime @default(dbgenerated("timezone('utc', NOW() + INTERVAL '24 hours')"))
+    user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId           Int      @unique
+}
