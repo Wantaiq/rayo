@@ -49,4 +49,25 @@ const createUser = async (username: string, passwordHash: string) => {
   return user;
 };
 
-export default { getUserByUsername, createUser, getUserWithPasswordByUsername };
+const getUserBySessionToken = async (token: string) => {
+  const user = await prisma.user.findFirst({
+    where: {
+      session: {
+        token,
+      },
+    },
+    select: {
+      id: true,
+      username: true,
+    },
+  });
+
+  return user;
+};
+
+export default {
+  getUserByUsername,
+  createUser,
+  getUserWithPasswordByUsername,
+  getUserBySessionToken,
+};
