@@ -1,8 +1,6 @@
 import authSchema from '@/schemas/auth.schema';
 import authService from '@/services/auth.service';
 import sessionService from '@/services/session.service';
-import userService from '@/services/user.service';
-import AppError from '@/utils/AppError';
 import tryCatch from '@/utils/tryCatch';
 import type { Request, Response } from 'express';
 import { InferType } from 'yup';
