@@ -1,6 +1,7 @@
-import { object, string } from 'yup';
+import type { User } from '@prisma/client';
+import { object, ObjectSchema, string } from 'yup';
 
-const register = object({
+const register: ObjectSchema<Omit<User, 'id'>> = object({
   username: string().required('Username is required.').trim(),
   password: string()
     .required('Password is required.')
@@ -8,7 +9,7 @@ const register = object({
     .trim(),
 });
 
-const login = object({
+const login: ObjectSchema<Omit<User, 'id'>> = object({
   username: string().required('Username is required.').trim(),
   password: string().required('Password is required.').trim(),
 });
