@@ -1,6 +1,7 @@
-import prisma from '@/utils/db';
+import sessionService from '@/services/session.service';
+import userService from '@/services/user.service';
+import AppError from '@/utils/AppError';
 import bcrypt from 'bcrypt';
-import crypto from 'node:crypto';
 
 const createPasswordHash = async (password: string) => {
   const passwordHash = await bcrypt.hash(password, 12);
@@ -15,38 +16,45 @@ const comparePassword = async (
   return await bcrypt.compare(passwordString, hashedPassword);
 };
 
-const createSessionToken = () => {
-  return crypto.randomBytes(64).toString('base64');
+const register = async (username: string, password: string) => {
+  const passwordHash = await createPasswordHash(password);
+  const newUser = await userService.createUser(username, passwordHash);
+  const { token } = await sessionService.createSession(newUser.id);
+
+  return { token, newUser };
 };
 
-const createSession = async (token: string, userId: number) => {
-  const newSession = await prisma.session.create({
-    data: {
-      token,
-      userId,
-    },
-    select: {
-      token: true,
-    },
-  });
+const login = async (username: string, password: string) => {
+  const existingUser =
+    await userService.getUserWithPasswordByUsername(username);
 
-  return newSession;
-};
+  if (!existingUser) {
+    throw new AppError('Invalid username or password.', 400);
+  }
 
-const deleteSessionByToken = async (token: string) => {
-  const deletedSession = await prisma.session.delete({
-    where: {
-      token,
-    },
-  });
+  const isPasswordValid = await comparePassword(
+    password,
+    existingUser.password,
+  );
+  if (!isPasswordValid) {
+    throw new AppError('Invalid username or password.', 400);
+  }
 
-  return deletedSession;
+  // @ts-ignore
+  delete existingUser.password;
+
+  const { token: sessionToken } = await sessionService.createSession(
+    existingUser.id,
+  );
+
+  return {
+    sessionToken,
+    id: existingUser.id,
+    username: existingUser.username,
+  };
 };
 
 export default {
-  createPasswordHash,
-  comparePassword,
-  createSessionToken,
-  createSession,
-  deleteSessionByToken,
+  register,
+  login,
 };

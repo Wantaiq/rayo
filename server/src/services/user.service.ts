@@ -34,11 +34,11 @@ const getUserWithPasswordByUsername = async (
   return user;
 };
 
-const createUser = async (username: string, password: string) => {
+const createUser = async (username: string, passwordHash: string) => {
   const user = await prisma.user.create({
     data: {
       username,
-      password,
+      password: passwordHash,
     },
     select: {
       id: true,

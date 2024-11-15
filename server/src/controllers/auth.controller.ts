@@ -1,5 +1,6 @@
 import authSchema from '@/schemas/auth.schema';
 import authService from '@/services/auth.service';
+import sessionService from '@/services/session.service';
 import userService from '@/services/user.service';
 import AppError from '@/utils/AppError';
 import tryCatch from '@/utils/tryCatch';
@@ -27,10 +28,10 @@ const register = tryCatch(
       throw new AppError('Username already in use.', 400);
     }
 
-    const passwordHash = await authService.createPasswordHash(password);
-    const newUser = await userService.createUser(username, passwordHash);
-    const sessionToken = authService.createSessionToken();
-    await authService.createSession(sessionToken, newUser.id);
+    const { token: sessionToken, newUser } = await authService.register(
+      username,
+      password,
+    );
 
     res.cookie('sessionToken', sessionToken, {
       httpOnly: true,
@@ -52,25 +53,11 @@ const login = tryCatch(
       stripUnknown: true,
     });
 
-    const existingUser =
-      await userService.getUserWithPasswordByUsername(username);
-    if (!existingUser) {
-      throw new AppError('Invalid username or password.', 400);
-    }
-
-    const isPasswordValid = await authService.comparePassword(
-      password,
-      existingUser.password,
-    );
-    if (!isPasswordValid) {
-      throw new AppError('Invalid username or password.', 400);
-    }
-
-    // @ts-ignore
-    delete existingUser.password;
-
-    const sessionToken = authService.createSessionToken();
-    await authService.createSession(sessionToken, existingUser.id);
+    const {
+      sessionToken,
+      id,
+      username: newUserUsername,
+    } = await authService.login(username, password);
 
     res.cookie('sessionToken', sessionToken, {
       httpOnly: true,
@@ -78,10 +65,7 @@ const login = tryCatch(
       sameSite: 'strict',
       maxAge: 24 * 60 * 60 * 1000,
     });
-    res
-      .status(200)
-      .json({ id: existingUser.id, username: existingUser.username })
-      .end();
+    res.status(200).json({ id, username: newUserUsername }).end();
   },
 );
 
@@ -92,7 +76,7 @@ const logout = tryCatch(async (req: Request, res: Response) => {
     return;
   }
 
-  await authService.deleteSessionByToken(sessionToken);
+  await sessionService.deleteSessionByToken(sessionToken);
 
   res.clearCookie('sessionToken', { httpOnly: true, secure: true });
   res.end();
