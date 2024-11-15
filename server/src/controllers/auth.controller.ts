@@ -23,11 +23,6 @@ const register = tryCatch(
       },
     );
 
-    const existingUsername = await userService.getUserByUsername(username);
-    if (existingUsername) {
-      throw new AppError('Username already in use.', 400);
-    }
-
     const { token: sessionToken, newUser } = await authService.register(
       username,
       password,

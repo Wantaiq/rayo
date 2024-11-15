@@ -17,6 +17,11 @@ const comparePassword = async (
 };
 
 const register = async (username: string, password: string) => {
+  const existingUsername = await userService.getUserByUsername(username);
+  if (existingUsername) {
+    throw new AppError('Username already in use.', 400);
+  }
+
   const passwordHash = await createPasswordHash(password);
   const newUser = await userService.createUser(username, passwordHash);
   const { token } = await sessionService.createSession(newUser.id);
