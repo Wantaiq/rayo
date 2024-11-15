@@ -42,7 +42,7 @@ const login = async (username: string, password: string) => {
   }
 
   // @ts-ignore
-  delete existingUser.password;
+  delete user.password;
 
   const { token: sessionToken } = await sessionService.createSession(user.id);
 
