@@ -85,4 +85,17 @@ const login = tryCatch(
   },
 );
 
-export default { register, login };
+const logout = tryCatch(async (req: Request, res: Response) => {
+  const sessionToken = req.cookies.sessionToken;
+  if (!sessionToken) {
+    res.status(204).end();
+    return;
+  }
+
+  await authService.deleteSessionByToken(sessionToken);
+
+  res.clearCookie('sessionToken', { httpOnly: true, secure: true });
+  res.end();
+});
+
+export default { register, login, logout };

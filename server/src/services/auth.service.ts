@@ -32,9 +32,21 @@ const createSession = async (token: string, userId: number) => {
 
   return newSession;
 };
+
+const deleteSessionByToken = async (token: string) => {
+  const deletedSession = await prisma.session.delete({
+    where: {
+      token,
+    },
+  });
+
+  return deletedSession;
+};
+
 export default {
   createPasswordHash,
   comparePassword,
   createSessionToken,
   createSession,
+  deleteSessionByToken,
 };
