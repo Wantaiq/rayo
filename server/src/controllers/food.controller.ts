@@ -1,11 +1,20 @@
+import foodSchema from '@/schemas/food.schemas';
 import foodService from '@/services/food.service';
+import AppError from '@/utils/AppError';
 import tryCatch from '@/utils/tryCatch';
 import type { Food } from '@prisma/client';
-import type { Response } from 'express';
+import type { Request, Response } from 'express';
+import { InferType } from 'yup';
 
-const getAll = tryCatch(async (req, res: Response<Food[]>) => {
-  const food = await foodService.getAll();
+type FoodWithoutUserId = Omit<Food, 'userId'>;
 
+const getAll = tryCatch(async (req, res: Response<FoodWithoutUserId[]>) => {
+  if (!req.currentUser) {
+    throw new AppError('Unauthorized', 401);
+  }
+
+  const { id } = req.currentUser;
+  const food = await foodService.getAllFromUser(id);
   res.status(200).json(food).end();
 });
 
