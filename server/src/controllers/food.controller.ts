@@ -18,4 +18,21 @@ const getAll = tryCatch(async (req, res: Response<FoodWithoutUserId[]>) => {
   res.status(200).json(food).end();
 });
 
-export default { getAll };
+const create = tryCatch(
+  async (
+    req: Request<any, any, InferType<typeof foodSchema.create>>,
+    res: Response<FoodWithoutUserId>,
+  ) => {
+    if (!req.currentUser) {
+      throw new AppError('Unauthorized', 401);
+    }
+
+    const { id } = req.currentUser;
+    const { name, quantity } = await foodSchema.create.validate(req.body);
+    const newFood = await foodService.create(name, quantity, id);
+
+    res.status(200).json(newFood).end();
+  },
+);
+
+export default { getAll, create };

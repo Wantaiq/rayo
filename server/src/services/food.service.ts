@@ -15,4 +15,21 @@ const getAllFromUser = async (userId: number) => {
   return food;
 };
 
-export default { getAllFromUser };
+const create = async (name: string, quantity: number, userId: number) => {
+  const newFood = await prisma.food.create({
+    data: {
+      name,
+      quantity,
+      userId,
+    },
+    select: {
+      id: true,
+      name: true,
+      quantity: true,
+    },
+  });
+
+  return newFood;
+};
+
+export default { getAllFromUser, create };
