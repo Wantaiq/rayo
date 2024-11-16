@@ -32,4 +32,29 @@ const create = async (name: string, quantity: number, userId: number) => {
   return newFood;
 };
 
-export default { getAllFromUser, create };
+const updateById = async (
+  id: number,
+  name: string,
+  quantity: number,
+  userId: number,
+) => {
+  const updatedFood = prisma.food.update({
+    where: {
+      id,
+      userId,
+    },
+    data: {
+      name,
+      quantity,
+    },
+    select: {
+      id: true,
+      name: true,
+      quantity: true,
+    },
+  });
+
+  return updatedFood;
+};
+
+export default { getAllFromUser, create, updateById };

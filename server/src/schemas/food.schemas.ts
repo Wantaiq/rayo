@@ -9,4 +9,14 @@ const create: ObjectSchema<Omit<Food, 'id' | 'userId'>> = object({
     .positive('Quantity has to be a positive number.'),
 });
 
-export default { create };
+const update: ObjectSchema<Omit<Food, 'userId'>> = create.concat(
+  object({
+    id: number()
+      .typeError('Id needs to be a number.')
+      .positive()
+      .integer()
+      .required(),
+  }),
+);
+
+export default { create, update };

@@ -7,5 +7,6 @@ const router = Router();
 router.use(authHandler);
 router.get('/', foodController.getAll);
 router.post('/', foodController.create);
+router.put('/:id', foodController.updateById);
 
 export default router;
