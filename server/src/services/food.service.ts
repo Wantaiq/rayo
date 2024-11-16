@@ -57,4 +57,19 @@ const updateById = async (
   return updatedFood;
 };
 
-export default { getAllFromUser, create, updateById };
+const deleteById = async (id: number, userId: number) => {
+  const deletedFood = await prisma.food.delete({
+    where: {
+      id,
+      userId,
+    },
+    select: {
+      id: true,
+      name: true,
+      quantity: true,
+    },
+  });
+
+  return deletedFood;
+};
+export default { getAllFromUser, create, updateById, deleteById };

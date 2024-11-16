@@ -61,4 +61,21 @@ const updateById = tryCatch(
   },
 );
 
-export default { getAll, create, updateById };
+const deleteById = tryCatch(
+  async (req: Request<{ id?: number }>, res: Response<FoodWithoutUserId>) => {
+    if (!req.currentUser) {
+      throw new AppError('Unauthorized', 401);
+    }
+
+    const { id } = await foodSchema.deleteById.validate({
+      ...req.params,
+    });
+    const { id: userId } = req.currentUser;
+
+    const deletedFood = await foodService.deleteById(id, userId);
+
+    res.status(200).json(deletedFood).end();
+  },
+);
+
+export default { getAll, create, updateById, deleteById };

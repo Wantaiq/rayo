@@ -19,4 +19,12 @@ const update: ObjectSchema<Omit<Food, 'userId'>> = create.concat(
   }),
 );
 
-export default { create, update };
+const deleteById: ObjectSchema<Pick<Food, 'id'>> = object({
+  id: number()
+    .typeError('Id needs to be a number.')
+    .positive()
+    .integer()
+    .required(),
+});
+
+export default { create, update, deleteById };
