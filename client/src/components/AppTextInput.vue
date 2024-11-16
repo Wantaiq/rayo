@@ -37,7 +37,8 @@
       {{ label }}
     </label>
     <input
-      class="rounded-lg text-zinc-900 focus:ring-0 border-0"
+      class="rounded-lg text-zinc-800 focus:ring-0 border border-zinc-800
+        focus:border-teal-500"
       :type="type"
       :name="name"
       :id="name"
