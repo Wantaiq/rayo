@@ -38,7 +38,7 @@ const updateById = async (
   quantity: number,
   userId: number,
 ) => {
-  const updatedFood = prisma.food.update({
+  const updatedFood = await prisma.food.update({
     where: {
       id,
       userId,
