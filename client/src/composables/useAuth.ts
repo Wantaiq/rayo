@@ -27,7 +27,20 @@ const useAuth = () => {
     },
   });
 
-  return { register };
+  const login = useMutation({
+    mutationFn: async (loginData: UserAuthDataType) => {
+      return await api.post<UserResponse>('/auth/login', loginData);
+    },
+    retry: false,
+    onSuccess: response => {
+      queryClient.setQueryData(['user'], {
+        id: response.data.id,
+        username: response.data.username,
+      });
+    },
+  });
+
+  return { register, login };
 };
 
 export default useAuth;

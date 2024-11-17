@@ -21,6 +21,15 @@ const routes = [
       requiresAuth: false,
     },
   },
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import('@/views/LoginView.vue'),
+    meta: {
+      layout: PublicLayout,
+      requiresAuth: false,
+    },
+  },
 ] satisfies RouteRecordRaw[];
 
 export default routes;
