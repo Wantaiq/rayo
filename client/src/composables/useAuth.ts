@@ -1,12 +1,12 @@
 import api from '@/utils/api';
 import { useMutation, useQueryClient } from '@tanstack/vue-query';
 
-type UserAuthDataType = {
+type UserCredentialsType = {
   username: string;
   password: string;
 };
 
-type UserResponse = {
+type UserResponseType = {
   id: number;
   username: string;
 };
@@ -15,8 +15,11 @@ const useAuth = () => {
   const queryClient = useQueryClient();
 
   const register = useMutation({
-    mutationFn: async (loginData: UserAuthDataType) => {
-      return await api.post<UserResponse>('/auth/register', loginData);
+    mutationFn: async (registrationData: UserCredentialsType) => {
+      return await api.post<UserResponseType>(
+        '/auth/register',
+        registrationData,
+      );
     },
     retry: false,
     onSuccess: response => {
@@ -28,8 +31,8 @@ const useAuth = () => {
   });
 
   const login = useMutation({
-    mutationFn: async (loginData: UserAuthDataType) => {
-      return await api.post<UserResponse>('/auth/login', loginData);
+    mutationFn: async (loginData: UserCredentialsType) => {
+      return await api.post<UserResponseType>('/auth/login', loginData);
     },
     retry: false,
     onSuccess: response => {
