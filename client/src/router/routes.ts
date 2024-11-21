@@ -1,3 +1,4 @@
+import PrivateLayout from '@/layouts/PrivateLayout.vue';
 import PublicLayout from '@/layouts/PublicLayout.vue';
 import HomeView from '@/views/HomeView.vue';
 import type { RouteRecordRaw } from 'vue-router';
@@ -28,6 +29,15 @@ const routes = [
     meta: {
       layout: PublicLayout,
       requiresAuth: false,
+    },
+  },
+  {
+    path: '/logout',
+    name: 'Logout',
+    component: () => import('@/views/LogoutView.vue'),
+    meta: {
+      layout: PrivateLayout,
+      requiresAuth: true,
     },
   },
 ] satisfies RouteRecordRaw[];

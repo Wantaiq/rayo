@@ -43,7 +43,20 @@ const useAuth = () => {
     },
   });
 
-  return { register, login };
+  const logout = useMutation({
+    mutationFn: async () => {
+      return await api.post<never>('/auth/logout');
+    },
+    retry: false,
+    onSuccess: () => {
+      queryClient.setQueryData(['user'], {
+        id: null,
+        username: null,
+      });
+    },
+  });
+
+  return { register, login, logout };
 };
 
 export default useAuth;
