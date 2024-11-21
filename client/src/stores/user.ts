@@ -13,9 +13,15 @@ export const useUserStore = defineStore('user', () => {
     isLoggedIn.value = true;
   };
 
+  const logout = () => {
+    userData.value = { id: null, username: null };
+    isLoggedIn.value = false;
+  };
+
   return {
     isLoggedIn,
     userData,
     login,
+    logout,
   };
 });
